@@ -1,12 +1,15 @@
 class Reservation < ApplicationRecord
 
-      validates_presence_of :number
-      has_many :reservations
+    validates_presence_of :train_id, :seat_number, :booking_code
+    validates_uniqueness_of :seat_number, :scope => :train_id
 
-      def available_seats
-        # TODO: 回传有空的座位，这里先暂时固定回传一个数组，等会再来处理
-        ["1A", "1B", "1C", "1D", "1F"]
-      end
+    belongs_to :train
+
+    before_validation :generate_booking_code, :on => :create
+
+    def generate_booking_code
+      self.booking_code = SecureRandom.uuid
+    end
 
 
 end
